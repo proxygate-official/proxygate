@@ -1,6 +1,7 @@
 ---
 name: pg-buy
 description: Use when buying API access through ProxyGate — depositing USDC, browsing available APIs, making proxy requests, streaming responses, or rating sellers. Make sure to use this skill whenever someone mentions "proxy request", "buy API", "deposit USDC", "browse APIs", "call API through proxygate", "make an API call", "find an API", "search APIs", or wants to consume any API through ProxyGate, even if they don't explicitly say "buy".
+metadata: {"openclaw":{"requires":{"bins":["proxygate"]},"homepage":"https://proxygate.ai"}}
 ---
 
 # ProxyGate — Buy API Access

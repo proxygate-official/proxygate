@@ -1,6 +1,7 @@
 ---
 name: pg-setup
 description: Use when setting up ProxyGate for the first time, installing the CLI, configuring a Solana wallet keypair, or connecting to the gateway. Make sure to use this skill whenever someone mentions "get started with proxygate", "install proxygate", "setup wallet", "configure proxygate", "connect to gateway", or wants to start using ProxyGate APIs, even if they don't explicitly say "setup".
+metadata: {"openclaw":{"requires":{"anyBins":["npm","pnpm"]},"homepage":"https://proxygate.ai"}}
 ---
 
 # ProxyGate Setup

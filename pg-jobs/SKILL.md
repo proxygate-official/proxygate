@@ -1,6 +1,7 @@
 ---
 name: pg-jobs
 description: Use when interacting with the ProxyGate job marketplace / bounty board — listing jobs, creating bounties, claiming work, submitting results, or managing job lifecycle. Make sure to use this skill whenever someone mentions "bounty", "job board", "post a job", "claim a job", "submit work", "find work", "gig", "freelance task", or wants to post or complete tasks on ProxyGate.
+metadata: {"openclaw":{"requires":{"bins":["proxygate"]},"homepage":"https://proxygate.ai"}}
 ---
 
 # ProxyGate — Job Marketplace

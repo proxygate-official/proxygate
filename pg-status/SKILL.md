@@ -1,6 +1,7 @@
 ---
 name: pg-status
 description: Use when checking ProxyGate status — balance, usage, listings, tunnel health, earnings, seller profile, or job status. Make sure to use this skill whenever someone mentions "check balance", "proxygate status", "my usage", "my earnings", "what's my balance", "how much have I spent", "my listings", "settlement history", or wants any kind of status overview.
+metadata: {"openclaw":{"requires":{"bins":["proxygate"]},"homepage":"https://proxygate.ai"}}
 ---
 
 # ProxyGate Status
