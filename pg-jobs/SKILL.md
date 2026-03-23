@@ -94,7 +94,7 @@ Only works before a submission has been accepted.
 import { ProxyGateClient } from '@proxygate/sdk';
 
 const client = await ProxyGateClient.create({
-  keypairPath: '~/.proxygate/keypair.json',
+  apiKey: 'pg_live_abc123...',  // or keypairPath
 });
 
 // Browse jobs

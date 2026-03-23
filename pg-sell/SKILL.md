@@ -8,6 +8,13 @@ metadata: {"openclaw":{"requires":{"bins":["proxygate"]},"homepage":"https://pro
 
 Seller workflow: create listings, manage them, expose services via tunnel, track earnings.
 
+## Prerequisites
+
+Selling requires authentication. Any auth mode works for creating/managing listings, but **a wallet keypair is recommended** for sellers to receive settlement payouts directly.
+
+- **API key or delegation token**: Can create/manage listings and start tunnels. Earnings accumulate in your ProxyGate balance.
+- **Wallet keypair**: Full access — earnings settle directly to your Solana wallet.
+
 ## Process
 
 ### 1. Scaffold a project (optional)
@@ -20,7 +27,7 @@ proxygate create my-agent --template http-api --port 3000
 proxygate create my-agent --template llm-agent --port 8080
 ```
 
-Templates: `http-api` (Hono REST API), `llm-agent` (Hono + OpenAI + streaming).
+Templates: `http-api` (Hono REST API), `llm-agent` (Hono + LLM provider + streaming).
 
 ### 2. Test locally
 
@@ -44,10 +51,13 @@ Non-interactive:
 ```bash
 proxygate listings create --non-interactive \
   --service-name "My API" \
-  --service openai \
-  --price-per-request 5000 \
+  --base-url "https://api.example.com" \
+  --auth-pattern bearer \
+  --api-key "your-api-key" \
+  --price 5000 \
   --total-rpm 100 \
-  --description "Fast GPT-4 access"
+  --categories ai \
+  --description "Fast Llama 3.3 access"
 ```
 
 ### 4. Manage listings
@@ -131,7 +141,7 @@ Dev mode shows live request/response logs with status, latency, and size. Produc
 ```bash
 proxygate settlements                              # earnings summary
 proxygate settlements -r seller                    # seller-specific view
-proxygate settlements -s openai --from 2026-03-01  # filtered
+proxygate settlements -s weather-api --from 2026-03-01  # filtered
 proxygate balance                                  # current balance
 proxygate listings list --table                    # listing status overview
 ```
@@ -160,7 +170,7 @@ const { listings } = await client.listings.list();
 await client.listings.update('listing-id', { price_per_request: 3000 });
 await client.listings.pause('listing-id');
 await client.listings.unpause('listing-id');
-await client.listings.rotateKey('listing-id', { api_key: 'sk-new-key...' });
+await client.listings.rotateKey('listing-id', { api_key: 'your-new-api-key' });
 await client.listings.uploadDocs('listing-id', {
   doc_type: 'openapi',
   content: fs.readFileSync('./openapi.yaml', 'utf-8'),

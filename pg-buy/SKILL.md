@@ -6,7 +6,16 @@ metadata: {"openclaw":{"requires":{"bins":["proxygate"]},"homepage":"https://pro
 
 # ProxyGate — Buy API Access
 
-Buyer workflow: deposit USDC, discover APIs, proxy requests, stream responses, rate sellers.
+Buyer workflow: discover APIs, deposit USDC, proxy requests, stream responses, rate sellers.
+
+## Prerequisites
+
+You need at least one auth method configured (`proxygate whoami` to check). See `pg-setup` for installation.
+
+- **API key or delegation token**: Can browse APIs and make proxy calls. Deposit/withdraw through the web dashboard at [app.proxygate.ai](https://app.proxygate.ai).
+- **Wallet keypair**: Full access — deposit and withdraw USDC directly from CLI.
+
+**Don't have USDC yet?** Onramping (buy USDC with fiat) and bridging (move USDC from other chains) are coming soon. For now, acquire USDC on Solana through an exchange or DEX, then deposit through the dashboard or CLI.
 
 ## Process
 
@@ -20,60 +29,68 @@ Shows: total balance, pending settlement, available, cooldown status. If 0 or in
 
 ### 2. Deposit USDC
 
+**Via CLI (requires wallet keypair):**
 ```bash
 proxygate deposit -a 5000000      # 5 USDC (amounts in lamports: 1 USDC = 1,000,000)
 proxygate deposit -a 1000000      # 1 USDC
 ```
 
-Vault auto-initializes on first deposit. User needs USDC in their Solana wallet. Use `--rpc <url>` for custom RPC.
+**Via web dashboard (any auth mode):**
+Visit [app.proxygate.ai](https://app.proxygate.ai) → Connect wallet → Deposit.
+
+Vault auto-initializes on first deposit. Use `--rpc <url>` for custom RPC.
 
 ### 3. Discover APIs
 
 ```bash
 # Browse all APIs with rich filtering
 proxygate apis                                    # all listings
-proxygate apis -s openai                          # filter by service
+proxygate apis -s weather-api                     # filter by service
 proxygate apis -c ai-models                       # filter by category
 proxygate apis -q "code review"                   # semantic search
 proxygate apis --verified                         # verified sellers only
 proxygate apis --sort price_asc                   # sort: price_asc, price_desc, popular, newest
 proxygate apis -l 50                              # limit results
 
-# Aggregated views
-proxygate pricing                                 # pricing table (service, type, price, sellers, RPM)
-proxygate pricing -s anthropic --json             # machine-readable
+# Search
+proxygate search weather                          # alias for apis -q
 proxygate services                                # service stats (cheapest, avg latency, rating)
 proxygate categories                              # browse categories
 
 # Listing details & docs
-proxygate listings docs <listing-id>              # view API documentation
+proxygate listings docs <id>                     # view API documentation
 ```
-
-Note the `listing-id` from output — needed for proxy requests.
 
 ### 4. Proxy a request
 
-```bash
-# POST request (default when -d is given)
-proxygate proxy <listing-id> /v1/chat/completions \
-  -d '{"model":"gpt-4","messages":[{"role":"user","content":"Hello"}]}'
+Use a **service name**, slug, or listing UUID — the CLI resolves it automatically:
 
-# GET request
-proxygate proxy <listing-id> /v1/models -X GET
+```bash
+# By service name (easiest)
+proxygate proxy weather-api /v1/forecast \
+  -d '{"latitude":52.37,"longitude":4.90,"hourly":"temperature_2m"}'
+
+# Simple GET
+proxygate proxy agent-postal-lookup /nl/1012
 
 # Stream SSE responses
-proxygate proxy <listing-id> /v1/chat/completions --stream \
-  -d '{"model":"gpt-4","messages":[{"role":"user","content":"Hello"}],"stream":true}'
+proxygate proxy weather-api /v1/forecast --stream \
+  -d '{"latitude":52.37,"longitude":4.90,"hourly":"temperature_2m"}'
 
-# With shield scanning (content moderation)
-proxygate proxy <listing-id> /path --shield monitor    # log threats
-proxygate proxy <listing-id> /path --shield strict     # block threats
-proxygate proxy <listing-id> /path --shield off        # disable
+# Shield scanning (content moderation)
+proxygate proxy weather-api /path --shield monitor    # log threats (default)
+proxygate proxy weather-api /path --shield strict     # block threats (credits refunded)
+proxygate proxy weather-api /path --shield off        # disable (no surcharge)
+```
+
+After each call, you'll see cost and request ID:
+```
+cost: $0.0155 | request: 905b1a53
 ```
 
 ### 5. Rate a seller
 
-After a proxy request, rate the seller using the request ID from the response receipt:
+Use the request ID shown after each proxy call:
 
 ```bash
 proxygate rate --request-id <id> --up      # positive rating
@@ -84,15 +101,15 @@ proxygate rate --request-id <id> --down    # negative rating
 
 ```bash
 proxygate usage                                   # recent request history
-proxygate usage -s openai -l 50                   # filtered by service
+proxygate usage -s weather-api -l 50              # filtered by service
 proxygate usage --from 2026-03-01 --to 2026-03-14 # date range
 proxygate usage --json                            # machine-readable
 
 proxygate settlements -r buyer                    # cost breakdown
-proxygate settlements -s openai --from 2026-03-01 # filtered
+proxygate settlements -s weather-api --from 2026-03-01 # filtered
 ```
 
-### 7. Withdraw (optional)
+### 7. Withdraw (requires wallet keypair)
 
 Convert credits back to USDC:
 
@@ -106,6 +123,8 @@ Recovery (if CLI crashes mid-withdrawal):
 proxygate withdraw-confirm --tx <tx_signature>
 ```
 
+Not available with API key or delegation token auth — use the web dashboard instead.
+
 ## SDK (Programmatic)
 
 For agent-to-agent use without CLI:
@@ -113,6 +132,12 @@ For agent-to-agent use without CLI:
 ```typescript
 import { ProxyGateClient, parseSSE } from '@proxygate/sdk';
 
+// API key auth (simplest)
+const client = await ProxyGateClient.create({
+  apiKey: 'pg_live_abc123...',
+});
+
+// Or wallet keypair auth (full access)
 const client = await ProxyGateClient.create({
   keypairPath: '~/.proxygate/keypair.json',
 });
@@ -121,43 +146,38 @@ const client = await ProxyGateClient.create({
 const { balance, available } = await client.balance();
 
 // Browse APIs
-const apis = await client.apis({ service: 'openai', verified: true });
+const apis = await client.apis({ service: 'weather-api', verified: true });
 const categories = await client.categories();
 const services = await client.services();
 
-// View listing docs
-const docs = await client.docs('listing-id');
-
-// Proxy a request
-const res = await client.proxy('listing-id', '/v1/chat/completions', {
-  model: 'gpt-4',
-  messages: [{ role: 'user', content: 'Hello' }],
+// Proxy a request (by service name, slug, or UUID)
+const res = await client.proxy('weather-api', '/v1/forecast', {
+  latitude: 52.37, longitude: 4.90, hourly: 'temperature_2m',
 });
 
 // Stream with SSE
-const res = await client.proxy('listing-id', '/v1/chat/completions',
-  { model: 'gpt-4', messages: [...], stream: true },
-  { stream: true }
+const streamRes = await client.proxy('weather-api', '/v1/forecast',
+  { latitude: 52.37, longitude: 4.90, hourly: 'temperature_2m' },
 );
-for await (const event of parseSSE(res)) {
+for await (const event of parseSSE(streamRes)) {
   process.stdout.write(event.data);
 }
 
 // Shield scanning
-const res = await client.proxy('listing-id', '/path', body, { shield: 'strict' });
+const shielded = await client.proxy('weather-api', '/path', body, { shield: 'strict' });
 
 // Rate a seller
 await client.rate({ request_id: 'req-id', is_positive: true });
 
 // Usage & settlements
-const usage = await client.usage({ service: 'openai', limit: 50 });
+const usage = await client.usage({ service: 'weather-api', limit: 50 });
 const settlements = await client.settlements({ role: 'buyer' });
 ```
 
 ## Success criteria
 
 - [ ] Balance checked and sufficient for request
-- [ ] Listing ID identified from apis/pricing output
+- [ ] Service found via `proxygate search` or `proxygate apis`
 - [ ] Proxy request returns upstream API response
 - [ ] Usage reflects the completed request
 

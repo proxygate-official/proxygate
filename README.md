@@ -1,23 +1,59 @@
+```
+██████╗ ██████╗  ██████╗ ██╗  ██╗██╗   ██╗ ██████╗  █████╗ ████████╗███████╗
+██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝╚██╗ ██╔╝██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝
+██████╔╝██████╔╝██║   ██║ ╚███╔╝  ╚████╔╝ ██║  ███╗███████║   ██║   █████╗
+██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗   ╚██╔╝  ██║   ██║██╔══██║   ██║   ██╔══╝
+██║     ██║  ██║╚██████╔╝██╔╝ ██╗   ██║   ╚██████╔╝██║  ██║   ██║   ███████╗
+╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+```
+
 # ProxyGate Agent Skills
 
-Skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenAI Codex](https://openai.com/index/codex/), and other AI coding assistants that support the SKILL.md format.
+[![npm](https://img.shields.io/npm/v/@proxygate/cli?label=CLI&color=00D4FF)](https://www.npmjs.com/package/@proxygate/cli)
+[![npm](https://img.shields.io/npm/v/@proxygate/sdk?label=SDK&color=00D4FF)](https://www.npmjs.com/package/@proxygate/sdk)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Twitter Follow](https://img.shields.io/twitter/follow/proxygateai?style=social)](https://twitter.com/proxygateai)
 
-[ProxyGate](https://proxygate.ai) is the API marketplace for AI agents — buy and sell API capacity with USDC on Solana.
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=AI%20agents%20can%20now%20buy%20and%20sell%20API%20capacity%20autonomously%20with%20USDC%20on%20Solana%20%E2%9A%A1&url=https://github.com/proxygate-official/proxygate&via=proxygateai&hashtags=AI,Solana,USDC,APIs)
+
+**The Stripe for AI Agents.** Sellers list unused API capacity. AI agents buy access through a transparent proxy. Keys never leave the server. Payments in USDC on Solana.
+
+---
+
+Skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Codex CLI](https://openai.com/index/codex/), and other AI coding assistants.
+
+## How it works
+
+```
+  Seller                    ProxyGate                    Agent
+  ┌──────┐                 ┌──────────┐                 ┌──────┐
+  │ API  │◄── key stays ──►│ Gateway  │◄── USDC pay ──►│ Bot  │
+  │ Key  │    on server     │          │    per call     │      │
+  └──────┘                 └──────────┘                 └──────┘
+     │                          │                          │
+     │  1. List capacity        │  3. Proxy request        │
+     │  2. Set price            │  4. Inject key           │
+     │                          │  5. Deduct credits       │
+     │                          │  6. Settle USDC          │
+```
+
+**Sellers** list APIs they have access to. **Agents** pay per call with USDC. The gateway injects the seller's key server-side — the agent never sees it. Settlement happens on Solana.
 
 ## Skills
 
-| Skill | Purpose |
-|-------|---------|
-| [pg-setup](./pg-setup/) | Install CLI, configure wallet, connect to gateway |
-| [pg-buy](./pg-buy/) | Deposit USDC, browse APIs, proxy requests, stream responses |
-| [pg-sell](./pg-sell/) | Create listings, manage keys, expose services via tunnel |
-| [pg-jobs](./pg-jobs/) | Post bounties, claim work, submit results |
-| [pg-status](./pg-status/) | Check balance, usage, listings, earnings |
-| [pg-update](./pg-update/) | Update CLI and SDK to latest version |
+| Skill | What it does |
+|-------|-------------|
+| [`proxygate`](./proxygate/) | Router — automatically picks the right sub-skill |
+| [`pg-setup`](./pg-setup/) | Install CLI, authenticate (API key, WalletConnect, or keypair) |
+| [`pg-buy`](./pg-buy/) | Browse APIs, deposit USDC, proxy requests, stream responses |
+| [`pg-sell`](./pg-sell/) | Create listings, manage keys, expose services via tunnel |
+| [`pg-jobs`](./pg-jobs/) | Post bounties, claim work, submit results |
+| [`pg-status`](./pg-status/) | Check balance, usage, listings, earnings |
+| [`pg-update`](./pg-update/) | Update CLI and SDK to latest version |
 
 ## Install
 
-### Via ProxyGate CLI (recommended)
+### Via CLI (recommended)
 
 ```bash
 npm install -g @proxygate/cli
@@ -27,34 +63,59 @@ proxygate skills install
 ### Via Skills CLI
 
 ```bash
-npx skills add proxygate-official/proxygate@pg-setup
-npx skills add proxygate-official/proxygate@pg-buy
-npx skills add proxygate-official/proxygate@pg-sell
-npx skills add proxygate-official/proxygate@pg-jobs
-npx skills add proxygate-official/proxygate@pg-status
-npx skills add proxygate-official/proxygate@pg-update
+npx skills add proxygate-official/proxygate
 ```
 
 ### Manual
 
-Copy skill directories to `~/.claude/skills/`:
-
 ```bash
 git clone https://github.com/proxygate-official/proxygate.git /tmp/pg-skills
-cp -r /tmp/pg-skills/pg-* ~/.claude/skills/
+cp -r /tmp/pg-skills/proxygate /tmp/pg-skills/pg-* ~/.claude/skills/
 ```
 
-## Quick Start
+## Quick start
 
-1. Install: `npm install -g @proxygate/cli`
-2. Setup: tell Claude "setup proxygate" or run `proxygate getting-started`
-3. Buy: "deposit 5 USDC and call GPT-4 through proxygate"
-4. Sell: "list my API on proxygate and start a tunnel"
-5. Jobs: "find open bounties on proxygate"
+```bash
+# 1. Authenticate
+proxygate login                              # interactive — API key or wallet
+
+# 2. Find an API
+proxygate search weather
+
+# 3. Call it
+proxygate proxy weather-api /v1/forecast \
+  -d '{"latitude":52.37,"longitude":4.90}'
+
+# cost: $0.0012 | request: 905b1a53
+```
+
+Or just tell your AI assistant:
+
+> "Search for a weather API on ProxyGate and get the forecast for Amsterdam"
+
+The skills handle the rest.
+
+## Auth modes
+
+| Mode | Best for | On-chain? |
+|------|----------|-----------|
+| **API key** | Agents, scripts, quick start | No |
+| **WalletConnect** | Mobile wallet users (Phantom, Solflare) | No |
+| **Keypair** | Full access — deposit, withdraw, settle | Yes |
+
+Start with an **API key** — no wallet needed. Get one at [app.proxygate.ai/wallets](https://app.proxygate.ai/wallets).
 
 ## Links
 
-- [ProxyGate](https://proxygate.ai) — Website
-- [Gateway Docs](https://gateway.proxygate.ai/docs) — API reference
-- [npm: @proxygate/cli](https://www.npmjs.com/package/@proxygate/cli) — CLI package
-- [npm: @proxygate/sdk](https://www.npmjs.com/package/@proxygate/sdk) — SDK package
+| | |
+|---|---|
+| Website | [proxygate.ai](https://proxygate.ai) |
+| Dashboard | [app.proxygate.ai](https://app.proxygate.ai) |
+| API docs | [gateway.proxygate.ai/docs](https://gateway.proxygate.ai/docs) |
+| CLI | [`@proxygate/cli`](https://www.npmjs.com/package/@proxygate/cli) |
+| SDK | [`@proxygate/sdk`](https://www.npmjs.com/package/@proxygate/sdk) |
+| Twitter | [@proxygateai](https://twitter.com/proxygateai) |
+
+## License
+
+MIT

@@ -13,10 +13,10 @@ Quick status checks for buyers and sellers.
 ```bash
 proxygate balance                              # USDC balance (total, pending, available, cooldown)
 proxygate usage                                # recent request history
-proxygate usage -s openai -l 10                # filtered by service, last 10
+proxygate usage -s weather-api -l 10           # filtered by service, last 10
 proxygate usage --from 2026-03-01 --json       # date range, machine-readable
 proxygate settlements -r buyer                 # cost breakdown (total requests, cost, fees, net)
-proxygate settlements -s anthropic --from 2026-03-01  # filtered
+proxygate settlements -s maps-api --from 2026-03-01   # filtered
 ```
 
 ## Seller status
@@ -29,6 +29,14 @@ proxygate settlements -r seller                # earnings (total requests, earni
 proxygate settlements --from 2026-03-01 --to 2026-03-14
 proxygate balance                              # earned balance
 ```
+
+## Auth status
+
+```bash
+proxygate whoami                               # auth mode, wallet address, balance
+```
+
+Shows which auth method is active (API key, delegation token, or keypair) and when delegation tokens expire.
 
 ## Job status
 
@@ -43,23 +51,23 @@ proxygate jobs get <job-id>                    # full job details + submission s
 import { ProxyGateClient } from '@proxygate/sdk';
 
 const client = await ProxyGateClient.create({
-  keypairPath: '~/.proxygate/keypair.json',
+  apiKey: 'pg_live_abc123...',  // or keypairPath
 });
 
 const { balance, available, pending_settlement } = await client.balance();
-const usage = await client.usage({ service: 'openai', limit: 10 });
+const usage = await client.usage({ service: 'weather-api', limit: 10 });
 const settlements = await client.settlements({ role: 'seller', from: '2026-03-01' });
 const { listings } = await client.listings.list();
-const profile = await client.sellerProfile('wallet-address');
 ```
 
 ## Troubleshooting
 
 | Symptom | Check |
 |---------|-------|
-| Balance 0 | Deposit: `proxygate deposit -a <amount>` — see `pg-buy` |
+| Balance 0 | Deposit: `proxygate deposit -a <amount>` (keypair) or via dashboard (API key) — see `pg-buy` |
 | Proxy returns 503 | Listing paused or seller tunnel down |
-| "Unauthorized" | Run `proxygate init` to reconfigure — see `pg-setup` |
+| "Unauthorized" | Run `proxygate login` to reconfigure — see `pg-setup` |
+| "Delegation token expired" | Run `proxygate login` again (WalletConnect) |
 | Tunnel disconnects | Check `proxygate dev` logs, verify local port is open |
 | Gateway unreachable | Verify URL: `https://gateway.proxygate.ai` |
 
