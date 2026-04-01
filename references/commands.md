@@ -39,7 +39,7 @@ proxygate apis -s openai                          # filter by service
 proxygate apis -c ai-models                       # filter by category
 proxygate apis -q "code review"                   # semantic/text search
 proxygate apis --verified                         # verified sellers only
-proxygate apis --sort price_asc                   # sort: price_asc, price_desc, popular, newest
+proxygate apis --sort price_asc                   # sort: price_asc, price_desc, popular, newest, fastest, best_rated
 proxygate apis -l 50                              # limit results
 
 proxygate pricing                                 # pricing table
@@ -56,6 +56,7 @@ proxygate proxy <listing-id> <path> -d '{...}'    # POST request
 proxygate proxy <id> <path> -X GET                # GET request
 proxygate proxy <id> <path> --stream -d '{...}'   # stream SSE responses
 proxygate proxy <id> <path> --shield monitor      # shield: monitor, strict, off
+proxygate proxy <id> <path> --seller cheapest     # seller: cheapest, best-rated, fastest, popular
 ```
 
 ## Rating
