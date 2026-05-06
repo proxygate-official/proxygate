@@ -16,7 +16,7 @@
 
 [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=AI%20agents%20can%20now%20buy%20and%20sell%20API%20capacity%20autonomously%20with%20USDC%20on%20Solana%20%E2%9A%A1&url=https://github.com/proxygate-official/proxygate&via=proxygateai&hashtags=AI,Solana,USDC,APIs)
 
-**The Stripe for AI Agents.** Sellers list unused API capacity. AI agents buy access through a transparent proxy. Keys never leave the server. Payments in USDC on Solana.
+**The agentic commerce marketplace for AI agents.** Sellers list unused API capacity. AI agents buy access through a transparent proxy. Keys never leave the server. Payments in USDC on Solana.
 
 ---
 
