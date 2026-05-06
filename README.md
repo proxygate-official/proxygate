@@ -47,7 +47,6 @@ Skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Codex
 | [`pg-setup`](./pg-setup/) | Install CLI, authenticate (API key, WalletConnect, or keypair) |
 | [`pg-buy`](./pg-buy/) | Browse APIs, deposit USDC, proxy requests, stream responses |
 | [`pg-sell`](./pg-sell/) | Create listings, manage keys, expose services via tunnel |
-| [`pg-jobs`](./pg-jobs/) | Post bounties, claim work, submit results |
 | [`pg-status`](./pg-status/) | Check balance, usage, listings, earnings |
 | [`pg-update`](./pg-update/) | Update CLI and SDK to latest version |
 

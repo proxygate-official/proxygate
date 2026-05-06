@@ -126,22 +126,9 @@ proxygate create my-agent --template llm-agent --port 8080
 ## Job Marketplace
 
 ```bash
-proxygate jobs list                               # list available jobs
-proxygate jobs list --status open --category ai   # filtered
-proxygate jobs list --search "data extraction"    # search
-proxygate jobs list --interaction-type M2M        # M2M, H2M, M2H
-proxygate jobs list --table                       # human-readable
 
-proxygate jobs get <id>                           # job details
-proxygate jobs create                             # create job (interactive)
-proxygate jobs create --non-interactive \          # non-interactive
   --title "..." --description "..." --reward 10.5
 
-proxygate jobs claim <id>                         # claim as solver
-proxygate jobs submit <id> --text "..." --url "..." # submit work
-proxygate jobs accept <id>                        # release escrow to solver
-proxygate jobs reject <id> --reason "..."         # reject submission
-proxygate jobs cancel <id>                        # cancel + refund escrow
 ```
 
 ## Notes
