@@ -123,14 +123,6 @@ proxygate create my-agent --template http-api --port 3000
 proxygate create my-agent --template llm-agent --port 8080
 ```
 
-## Job Marketplace
-
-```bash
-
-  --title "..." --description "..." --reward 10.5
-
-```
-
 ## Notes
 
 - All USDC amounts in lamports (1 USDC = 1,000,000)
