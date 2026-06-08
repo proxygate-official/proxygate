@@ -7,7 +7,7 @@
 ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
 ```
 
-# ProxyGate Agent Skills
+# Proxygate Agent Skills
 
 [![npm](https://img.shields.io/npm/v/@proxygate/cli?label=CLI&color=00D4FF)](https://www.npmjs.com/package/@proxygate/cli)
 [![npm](https://img.shields.io/npm/v/@proxygate/sdk?label=SDK&color=00D4FF)](https://www.npmjs.com/package/@proxygate/sdk)
@@ -25,7 +25,7 @@ Skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Codex
 ## How it works
 
 ```
-  Seller                    ProxyGate                    Agent
+  Seller                    Proxygate                    Agent
   ┌──────┐                 ┌──────────┐                 ┌──────┐
   │ API  │◄── key stays ──►│ Gateway  │◄── USDC pay ──►│ Bot  │
   │ Key  │    on server     │          │    per call     │      │
@@ -90,7 +90,7 @@ proxygate proxy weather-api /v1/forecast \
 
 Or just tell your AI assistant:
 
-> "Search for a weather API on ProxyGate and get the forecast for Amsterdam"
+> "Search for a weather API on Proxygate and get the forecast for Amsterdam"
 
 The skills handle the rest.
 

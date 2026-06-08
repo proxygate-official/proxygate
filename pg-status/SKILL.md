@@ -1,10 +1,10 @@
 ---
 name: pg-status
-description: Use when checking ProxyGate status — balance, usage, listings, tunnel health, earnings, seller profile. Make sure to use this skill whenever someone mentions "check balance", "proxygate status", "my usage", "my earnings", "what's my balance", "how much have I spent", "my listings", "settlement history", or wants any kind of status overview.
+description: Use when checking Proxygate status — balance, usage, listings, tunnel health, earnings, seller profile. Make sure to use this skill whenever someone mentions "check balance", "proxygate status", "my usage", "my earnings", "what's my balance", "how much have I spent", "my listings", "settlement history", or wants any kind of status overview.
 metadata: {"openclaw":{"requires":{"bins":["proxygate"]},"homepage":"https://proxygate.ai"}}
 ---
 
-# ProxyGate Status
+# Proxygate Status
 
 Quick status checks for buyers and sellers.
 
@@ -41,9 +41,9 @@ Shows which auth method is active (API key, delegation token, or keypair) and wh
 ## SDK
 
 ```typescript
-import { ProxyGateClient } from '@proxygate/sdk';
+import { ProxygateClient } from '@proxygate/sdk';
 
-const client = await ProxyGateClient.create({
+const client = await ProxygateClient.create({
   apiKey: 'pg_live_abc123...',  // or keypairPath
 });
 
