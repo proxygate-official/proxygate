@@ -60,34 +60,31 @@ proxygate listings create --non-interactive \
   --description "Fast Llama 3.3 access"
 ```
 
-**Phase 51.5 — Mixed pricing (some endpoints free, others paid)**
+### Free listings (Phase 51.6)
 
-Sellers can mark specific endpoints free as an acquisition funnel. The listing-level
-`--price` still applies to paid endpoints; `--free-endpoint` and `--endpoint-price`
-override per path. Repeatable.
+Any seller may submit a free listing. The row enters "Pending approval" until an admin sets `free_listing_approved=true`.
 
 ```bash
-# Listing with free /sample, paid /v1/data at $0.005, and per-wallet 200-call free cap.
+# Wholly free listing (admin approval required before it goes live):
 proxygate listings create --non-interactive \
-  --service-name "My Dataset API" \
-  --base-url "https://api.example.com" \
-  --auth-pattern bearer --credential "..." \
-  --price 1000 --total-rpm 60 --categories data \
-  --free-endpoint "/sample" \
-  --free-endpoint "/v1/ping:50" \
-  --endpoint-price "/v1/data=5000" \
-  --free-daily-cap-per-wallet 200
+  --service-name "Open-Meteo" --base-url "https://api.open-meteo.com" \
+  --auth-pattern none --categories "weather" --free
+
+# --free is shorthand for --price 0:
+proxygate listings create --non-interactive ... --price 0
+
+# matrix row 3 — paid listing with free endpoint overrides (paid + free):
+proxygate listings create --non-interactive ... --price 1000 \
+  --free-endpoint "/v1/sample" --free-endpoint "/v1/ping:50"
+
+# matrix row 4 — free listing with paid endpoint overrides (free + paid):
+proxygate listings create --non-interactive ... --free \
+  --endpoint-price "/v1/premium=5000" --endpoint-price "/v1/bulk=10000"
 ```
 
-Flag formats:
-- `--free-endpoint "/path"` → endpoint resolves to `price_per_request=0`, default cap (100/day per wallet)
-- `--free-endpoint "/path:cap"` → custom per-wallet daily cap, e.g. `"/v1/ping:50"`
-- `--endpoint-price "/path=microUSDC"` → paid override, e.g. `"/v1/data=5000"` = $0.005
-- `--free-daily-cap-per-wallet <n>` → listing-level fallback cap for any free endpoint
-- `--free-daily-cap-global <n>` → listing-level global cap (protects your upstream quota)
+`--free` and `--price` are mutually exclusive — passing both prints a warning and uses `price=0`. Per-endpoint cap shorthand: `--free-endpoint "/path:N"` sets a per-wallet daily cap of `N` on that endpoint.
 
-Full listing-wide free (procured) is admin-only — sellers can offer free endpoints only via the
-`endpoint_prices` mechanism above.
+Per-listing logo upload is web-only — drag/drop in the seller dashboard wizard. There is no CLI flag for it.
 
 ### 4. Manage listings
 
@@ -98,13 +95,6 @@ proxygate listings list --table             # table format with status, RPM, pri
 
 # Update a listing
 proxygate listings update <id> --price 3000 --description "Updated pricing"
-
-# Phase 51.5: add/replace free endpoints. endpoint_prices is REPLACED entirely — pass all entries you want.
-proxygate listings update <id> \
-  --free-endpoint "/sample" \
-  --free-endpoint "/v1/models" \
-  --endpoint-price "/v1/data=5000" \
-  --free-daily-cap-per-wallet 200
 
 # Pause/unpause (stop accepting requests temporarily)
 proxygate listings pause <id>
